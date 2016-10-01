@@ -7,7 +7,7 @@ global:
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).
   external_labels:
-      monitor: 'my-project'
+      monitor: 'NPF2016'
 
 # Load and evaluate rules in this file every 'evaluation_interval' seconds.
 rule_files:
@@ -29,3 +29,47 @@ scrape_configs:
 
     static_configs:
          - targets: ['localhost:9090','cadvisor:8080','node-exporter:9100']
+
+  - job_name: 'snmp'
+    static_configs:
+      - targets:
+        - 10.0.0.1
+        - 10.0.0.5
+        - 10.0.1.11
+        - 10.0.1.11
+        - 10.0.1.70
+        - 10.0.1.90
+        - 10.0.1.100
+        - 10.0.1.171
+        - 10.0.1.191
+        - 10.0.1.200
+        # - 10.255.255.1
+        # - 10.255.255.2
+        # - 10.255.255.3
+        # - 10.255.255.4
+        # - 10.255.255.5
+        # - 10.255.255.6
+        # - 10.255.255.7
+        # - 10.255.255.8
+        # - 10.255.255.9
+        # - 10.255.255.10
+        # - 10.255.255.11
+        # - 10.255.255.12
+        # - 10.255.255.13
+        # - 10.255.255.14
+        # - 10.255.255.111
+        # - 10.255.255.222
+        # - 10.255.255.250
+        # - 10.255.255.251
+        # - 10.255.255.253
+        # - 10.255.255.254
+    metrics_path: /snmp
+    params:
+      module: [default]
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9116  # SNMP exporter.

@@ -32,7 +32,18 @@ services:
       - cadvisor
     networks:
       - back-tier
-  
+
+  snmp-exporter:
+    image: prom/snmp-exporter
+    volumes:
+      - ./snmp/:/etc/snmp/
+    expose:
+      - 9116
+    networks:
+      - back-tier
+    command:
+      - '-config.file=/etc/snmp/snmp.yml'
+
   node-exporter:
     image: prom/node-exporter
     expose:
@@ -43,14 +54,14 @@ services:
     image: prom/alertmanager
     ports:
       - 9093:9093
-    volumes: 
+    volumes:
       - ./alertmanager/:/etc/alertmanager/
     networks:
       - back-tier
     command:
       - '-config.file=/etc/alertmanager/config.yml'
       - '-storage.path=/alertmanager'
-      
+
   cadvisor:
     image: google/cadvisor
     volumes:
@@ -62,7 +73,7 @@ services:
       - 8080
     networks:
       - back-tier
-  
+
   grafana:
     image: grafana/grafana
     depends_on:
