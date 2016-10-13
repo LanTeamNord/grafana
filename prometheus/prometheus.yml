@@ -34,22 +34,26 @@ scrape_configs:
         - 'node-exporter:9100'
         - '10.0.1.101:8000'  # Rack1 - Power collector data
         - '10.0.1.201:8000'  # Rack2 - Power collector data
+        - 'ping-exporter:9120'
 
   - job_name: 'snmp-servers'
-    scrape_interval: 30s
+    scrape_interval: 5s
     static_configs:
       - targets:
         - 10.0.0.1
         - 10.0.0.2
         - 10.0.0.5
         - 10.0.0.6
-        - 10.0.1.11
-        - 10.0.1.70
-        - 10.0.1.90
         - 10.0.1.100
+        - 10.0.1.11
+        - 10.0.1.12
+        - 10.0.1.138
+        - 10.0.1.139
         - 10.0.1.171
         - 10.0.1.191
         - 10.0.1.200
+        - 10.0.1.70
+        - 10.0.1.90
     metrics_path: /snmp
     params:
       module: [servers]

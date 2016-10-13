@@ -39,8 +39,6 @@ services:
       - ./snmp/:/etc/snmp/
     expose:
       - 9116
-    ports:
-      - 9116:9116
     networks:
       - back-tier
     command:
@@ -89,3 +87,10 @@ services:
     networks:
       - back-tier
       - front-tier
+
+  ping-exporter:
+    image: npflan/ping-exporter
+    expose:
+      - 9120
+    networks:
+      - back-tier

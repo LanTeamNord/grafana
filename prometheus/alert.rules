@@ -1,11 +1,15 @@
 ALERT service_down
   IF up == 0
 
-ALERT low_speed
-  IF up == 0
+ALERT low_uplink_speed
+  IF (ifOperStatus{job="snmp-access"} == 1 and ifSpeed{job="snmp-access"} != 1000000000)
+  ANNOTATIONS {
+      summary = "Instance {{ $labels.instance }} uplink speed is low",
+      description = "Instance {{ $labels.instance }} uplink speed is low",
+  }
   
 ALERT high_load
-  IF node_load1 > 0.5
+  IF node_load1 > 1.5
   ANNOTATIONS {
       summary = "Instance {{ $labels.instance }} under high load",
       description = "{{ $labels.instance }} of job {{ $labels.job }} is under high load.",
