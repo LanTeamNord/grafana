@@ -39,6 +39,8 @@ services:
       - ./snmp/:/etc/snmp/
     expose:
       - 9116
+    ports:
+      - 9116:9116
     networks:
       - back-tier
     command:

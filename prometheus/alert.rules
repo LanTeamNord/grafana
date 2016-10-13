@@ -1,5 +1,8 @@
 ALERT service_down
   IF up == 0
+
+ALERT low_speed
+  IF up == 0
   
 ALERT high_load
   IF node_load1 > 0.5
