@@ -22,7 +22,7 @@ scrape_configs:
   - job_name: 'prometheus'
 
     # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 5s
+    scrape_interval: 15s
 
     # metrics_path defaults to '/metrics'
     # scheme defaults to 'http'.
@@ -32,28 +32,59 @@ scrape_configs:
         - 'localhost:9090'
         - 'cadvisor:8080'
         - 'node-exporter:9100'
+        - 'ping-exporter:9120'
         - '10.0.1.101:8000'  # Rack1 - Power collector data
         - '10.0.1.201:8000'  # Rack2 - Power collector data
-        - 'ping-exporter:9120'
+        - '10.0.0.1:9120'    # pfstats
+        - '10.0.0.5:9120'    # pfstats
+        # - '10.0.1.70:9100'   # cache
+        # - '10.0.1.90:9100'   # cache
+        # - '10.0.1.171:9100'  # cache
+        # - '10.0.1.191:9100'  # cache
+
+  - job_name: 'firewall-node'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 30s
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets:
+        - '10.0.0.1:9100'    # fw1 node 
+        - '10.0.0.5:9100'    # fw2 node
+
+  - job_name: 'firewall-states'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 300s
+    scrape_timeout: 150s
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets:
+        - '10.0.0.1:9121'    # fw1 states
+        - '10.0.0.5:9121'    # fw2 states
 
   - job_name: 'snmp-servers'
     scrape_interval: 5s
     static_configs:
       - targets:
         - 10.0.0.1
-        - 10.0.0.2
         - 10.0.0.5
-        - 10.0.0.6
         - 10.0.1.100
         - 10.0.1.11
         - 10.0.1.12
         - 10.0.1.138
         - 10.0.1.139
-        - 10.0.1.171
-        - 10.0.1.191
+        # - 10.0.1.171  # cache
+        # - 10.0.1.191  # cache
         - 10.0.1.200
-        - 10.0.1.70
-        - 10.0.1.90
+        # - 10.0.1.70  # cache
+        # - 10.0.1.90  # cache
     metrics_path: /snmp
     params:
       module: [servers]
@@ -66,29 +97,29 @@ scrape_configs:
         replacement: snmp-exporter:9116  # SNMP exporter.
 
   - job_name: 'snmp-dist'
-    scrape_interval: 30s
     static_configs:
       - targets:
-        - 10.255.255.1
-        - 10.255.255.2
-        - 10.255.255.3
-        - 10.255.255.4
-        - 10.255.255.5
-        - 10.255.255.6
-        - 10.255.255.7
-        - 10.255.255.8
-        - 10.255.255.9
-        - 10.255.255.10
-        - 10.255.255.11
-        - 10.255.255.12
-        - 10.255.255.13
-        - 10.255.255.14
-        - 10.255.255.111
-        - 10.255.255.222
-        - 10.255.255.250
-        - 10.255.255.251
-        - 10.255.255.253
-        - 10.255.255.254
+        - d1.dist.npf
+        - d2.dist.npf
+        - d3.dist.npf
+        - d4.dist.npf
+        - d5.dist.npf
+        - d6.dist.npf
+        - d7.dist.npf
+        - d8.dist.npf
+        - d9.dist.npf
+        - d10.dist.npf
+        - d11.dist.npf
+        - d12.dist.npf
+        - d13.dist.npf
+        - d14.dist.npf
+        - c1.dist.npf
+        - c2.dist.npf
+        - e5.dist.npf
+        - e4.dist.npf
+        - e3.dist.npf
+        - e2.dist.npf
+        - e1.dist.npf
     metrics_path: /snmp
     params:
       module: [dist]
@@ -104,317 +135,305 @@ scrape_configs:
     scrape_interval: 30s
     static_configs:
       - targets:
-        - 10.255.255.1
-        - 10.255.201.3
-        - 10.255.201.4
-        - 10.255.201.5
-        - 10.255.201.6
-        - 10.255.201.7
-        - 10.255.201.8
-        - 10.255.201.9
-        - 10.255.201.10
-        - 10.255.201.11
-        - 10.255.201.12
-        - 10.255.201.13
-        - 10.255.201.14
-        - 10.255.201.15
-        - 10.255.201.16
-        - 10.255.201.17
-        - 10.255.201.18
-        - 10.255.201.19
-        - 10.255.201.20
-        - 10.255.201.21
-        - 10.255.201.22
-        - 10.255.201.23
-        - 10.255.201.24
-        - 10.255.201.25
-        - 10.255.201.26
-        - 10.255.201.27
-        - 10.255.202.2
-        - 10.255.202.3
-        - 10.255.202.4
-        - 10.255.202.5
-        - 10.255.202.6
-        - 10.255.202.7
-        - 10.255.202.8
-        - 10.255.202.9
-        - 10.255.202.10
-        - 10.255.202.11
-        - 10.255.202.12
-        - 10.255.202.13
-        - 10.255.202.14
-        - 10.255.202.15
-        - 10.255.202.16
-        - 10.255.202.17
-        - 10.255.202.18
-        - 10.255.202.19
-        - 10.255.202.20
-        - 10.255.202.21
-        - 10.255.202.22
-        - 10.255.202.23
-        - 10.255.202.24
-        - 10.255.202.25
-        - 10.255.202.26
-        - 10.255.202.27
-        - 10.255.202.28
-        - 10.255.203.2
-        - 10.255.203.3
-        - 10.255.203.4
-        - 10.255.203.5
-        - 10.255.203.6
-        - 10.255.203.7
-        - 10.255.203.8
-        - 10.255.203.9
-        - 10.255.203.10
-        - 10.255.203.11
-        - 10.255.203.12
-        - 10.255.203.13
-        - 10.255.203.14
-        - 10.255.203.15
-        - 10.255.203.16
-        - 10.255.203.17
-        - 10.255.203.18
-        - 10.255.203.19
-        - 10.255.203.20
-        - 10.255.203.21
-        - 10.255.203.22
-        - 10.255.204.2
-        - 10.255.204.3
-        - 10.255.204.4
-        - 10.255.204.5
-        - 10.255.204.6
-        - 10.255.204.7
-        - 10.255.204.8
-        - 10.255.204.9
-        - 10.255.204.10
-        - 10.255.204.11
-        - 10.255.204.12
-        - 10.255.204.13
-        - 10.255.204.14
-        - 10.255.204.15
-        - 10.255.205.2
-        - 10.255.205.3
-        - 10.255.205.4
-        - 10.255.205.5
-        - 10.255.205.6
-        - 10.255.205.7
-        - 10.255.205.8
-        - 10.255.205.9
-        - 10.255.205.10
-        - 10.255.205.11
-        - 10.255.205.12
-        - 10.255.205.13
-        - 10.255.205.14
-        - 10.255.205.15
-        - 10.255.205.16
-        - 10.255.205.17
-        - 10.255.207.2
-        - 10.255.207.3
-        - 10.255.207.4
-        - 10.255.207.5
-        - 10.255.207.6
-        - 10.255.207.7
-        - 10.255.207.8
-        - 10.255.207.9
-        - 10.255.207.10
-        - 10.255.207.11
-        - 10.255.207.12
-        - 10.255.207.13
-        - 10.255.207.14
-        - 10.255.207.15
-        - 10.255.207.16
-        - 10.255.207.17
-        - 10.255.207.18
-        - 10.255.207.19
-        - 10.255.208.2
-        - 10.255.208.3
-        - 10.255.208.4
-        - 10.255.208.5
-        - 10.255.208.6
-        - 10.255.208.7
-        - 10.255.208.8
-        - 10.255.208.9
-        - 10.255.208.10
-        - 10.255.208.11
-        - 10.255.208.12
-        - 10.255.208.13
-        - 10.255.208.14
-        - 10.255.208.15
-        - 10.255.208.16
-        - 10.255.208.17
-        - 10.255.209.2
-        - 10.255.209.3
-        - 10.255.209.4
-        - 10.255.209.5
-        - 10.255.209.6
-        - 10.255.209.7
-        - 10.255.209.8
-        - 10.255.209.9
-        - 10.255.209.10
-        - 10.255.209.11
-        - 10.255.209.12
-        - 10.255.209.13
-        - 10.255.209.14
-        - 10.255.209.15
-        - 10.255.209.16
-        - 10.255.209.17
-        - 10.255.210.2
-        - 10.255.210.3
-        - 10.255.210.4
-        - 10.255.210.5
-        - 10.255.210.6
-        - 10.255.210.7
-        - 10.255.210.8
-        - 10.255.210.9
-        - 10.255.210.10
-        - 10.255.210.11
-        - 10.255.210.12
-        - 10.255.210.13
-        - 10.255.210.14
-        - 10.255.210.15
-        - 10.255.210.16
-        - 10.255.210.17
-        - 10.255.210.18
-        - 10.255.210.19
-        - 10.255.211.2
-        - 10.255.211.3
-        - 10.255.211.4
-        - 10.255.211.5
-        - 10.255.211.6
-        - 10.255.211.7
-        - 10.255.211.8
-        - 10.255.211.9
-        - 10.255.211.10
-        - 10.255.211.11
-        - 10.255.211.12
-        - 10.255.211.13
-        - 10.255.211.14
-        - 10.255.211.15
-        - 10.255.211.16
-        - 10.255.211.17
-        - 10.255.211.18
-        - 10.255.211.19
-        - 10.255.212.2
-        - 10.255.212.3
-        - 10.255.212.4
-        - 10.255.212.5
-        - 10.255.212.6
-        - 10.255.212.7
-        - 10.255.212.8
-        - 10.255.212.9
-        - 10.255.212.10
-        - 10.255.212.11
-        - 10.255.212.12
-        - 10.255.212.13
-        - 10.255.212.14
-        - 10.255.212.15
-        - 10.255.213.9
-        - 10.255.213.10
-        - 10.255.213.11
-        - 10.255.213.12
-        - 10.255.213.13
-        - 10.255.213.14
-        - 10.255.213.15
-        - 10.255.213.16
-        - 10.255.213.17
-        - 10.255.213.18
-        - 10.255.213.19
-        - 10.255.213.20
-        - 10.255.213.21
-        - 10.255.213.22
-        - 10.255.213.23
-        - 10.255.213.24
-        - 10.255.213.25
-        - 10.255.213.26
-        - 10.255.213.27
-        - 10.255.213.28
-        - 10.255.213.29
-        - 10.255.213.30
-        - 10.255.213.31
-        - 10.255.214.7
-        - 10.255.214.8
-        - 10.255.214.9
-        - 10.255.214.10
-        - 10.255.214.11
-        - 10.255.214.12
-        - 10.255.214.13
-        - 10.255.214.14
-        - 10.255.214.15
-        - 10.255.214.16
-        - 10.255.214.17
-        - 10.255.214.18
-        - 10.255.214.19
-        - 10.255.214.20
-        - 10.255.214.21
-        - 10.255.214.22
-        - 10.255.214.23
-        - 10.255.214.24
-        - 10.255.214.25
-        - 10.255.214.26
-        - 10.255.253.2
-        - 10.255.253.3
-        - 10.255.253.4
-        - 10.255.253.5
-        - 10.255.253.6
-        - 10.255.253.7
-        - 10.255.253.8
-        - 10.255.253.9
-        - 10.255.253.10
-        - 10.255.253.11
-        - 10.255.253.12
-        - 10.255.253.13
-        - 10.255.253.14
-        - 10.255.253.15
-        - 10.255.253.16
-        - 10.255.253.17
-        - 10.255.252.2
-        - 10.255.252.3
-        - 10.255.252.4
-        - 10.255.252.5
-        - 10.255.251.2
-        - 10.255.251.3
-        - 10.255.251.4
-        - 10.255.251.5
-        - 10.255.251.6
-        - 10.255.251.7
-        - 10.255.251.8
-        - 10.255.251.9
-        - 10.255.251.10
-        - 10.255.250.2
-        - 10.255.250.3
-        - 10.255.250.4
-        - 10.255.250.5
-        - 10.255.250.6
-        - 10.255.250.7
-        - 10.255.250.8
-        - 10.255.250.9
-        - 10.255.250.10
-        - 10.255.205.18
-        - 10.255.205.19
-        - 10.255.205.20
-        - 10.255.205.21
-        - 10.255.205.22
-        - 10.255.205.23
-        - 10.255.205.24
-        - 10.255.205.25
-        - 10.255.205.22
-        - 10.255.206.2
-        - 10.255.206.3
-        - 10.255.206.4
-        - 10.255.206.5
-        - 10.255.206.4
-        - 10.255.206.5
-        - 10.255.206.6
-        - 10.255.206.7
-        - 10.255.206.8
-        - 10.255.206.9
-        - 10.255.206.10
-        - 10.255.206.11
-        - 10.255.206.12
-        - 10.255.206.13
-        - 10.255.206.14
-        - 10.255.212.14
-        - 10.255.212.15
+        - aa1.access.npf
+        - aa2.access.npf
+        - ab1.access.npf
+        - ab2.access.npf
+        - ac1.access.npf
+        - ac2.access.npf
+        - ad1.access.npf
+        - ad2.access.npf
+        - ae1.access.npf
+        - ae2.access.npf
+        - af1.access.npf
+        - af2.access.npf
+        - ag1.access.npf
+        - ag2.access.npf
+        - ah1.access.npf
+        - ah2.access.npf
+        - aj1.access.npf
+        - aj2.access.npf
+        - ak1.access.npf
+        - ak2.access.npf
+        - al1.access.npf
+        - al2.access.npf
+        - am1.access.npf
+        - am2.access.npf
+        - an1.access.npf
+        - an2.access.npf
+        - ap1.access.npf
+        - ap2.access.npf
+        - aq1.access.npf
+        - aq2.access.npf
+        - ar1.access.npf
+        - ar2.access.npf
+        - as1.access.npf
+        - as2.access.npf
+        - at1.access.npf
+        - at2.access.npf
+        - au1.access.npf
+        - au2.access.npf
+        - av1.access.npf
+        - av2.access.npf
+        - aw1.access.npf
+        - aw2.access.npf
+        - ax1.access.npf
+        - ax2.access.npf
+        - ay1.access.npf
+        - ay2.access.npf
+        - az1.access.npf
+        - az2.access.npf
+        - ba1.access.npf
+        - ba2.access.npf
+        - bb1.access.npf
+        - bb2.access.npf
+        - bc1.access.npf
+        - bc2.access.npf
+        - bd1.access.npf
+        - bd2.access.npf
+        - be1.access.npf
+        - be2.access.npf
+        - bf1.access.npf
+        - bf2.access.npf
+        - bg1.access.npf
+        - bg2.access.npf
+        - bh1.access.npf
+        - bh2.access.npf
+        - billet.access.npf
+        - bj1.access.npf
+        - bj2.access.npf
+        - bk1.access.npf
+        - bk2.access.npf
+        - bl1.access.npf
+        - bl2.access.npf
+        - bm1.access.npf
+        - bm2.access.npf
+        - bn1.access.npf
+        - bn2.access.npf
+        - bp1.access.npf
+        - bp2.access.npf
+        - bq1.access.npf
+        - bq2.access.npf
+        - br1.access.npf
+        - br2.access.npf
+        - bs1.access.npf
+        - bs2.access.npf
+        - ca1.access.npf
+        - cb1.access.npf
+        - cc1.access.npf
+        - cd1.access.npf
+        - ce1.access.npf
+        - cf1.access.npf
+        - cg1.access.npf
+        - ch1.access.npf
+        - cj1.access.npf
+        - ck1.access.npf
+        - cl1.access.npf
+        - cm1.access.npf
+        - cn1.access.npf
+        - cp1.access.npf
+        - cq1.access.npf
+        - cr1.access.npf
+        - crew1.access.npf
+        - crew10.access.npf
+        - crew11.access.npf
+        - crew12.access.npf
+        - crew13.access.npf
+        - crew14.access.npf
+        - crew15.access.npf
+        - crew16.access.npf
+        - crew17.access.npf
+        - crew18.access.npf
+        - crew2.access.npf
+        - crew3.access.npf
+        - crew4.access.npf
+        - crew5.access.npf
+        - crew6.access.npf
+        - crew7.access.npf
+        - crew8.access.npf
+        - crew9.access.npf
+        - da1.access.npf
+        - da2.access.npf
+        - db1.access.npf
+        - db2.access.npf
+        - dc1.access.npf
+        - dc2.access.npf
+        - dd1.access.npf
+        - dd2.access.npf
+        - de1.access.npf
+        - de2.access.npf
+        - df1.access.npf
+        - df2.access.npf
+        - dg1.access.npf
+        - dg2.access.npf
+        - dh1.access.npf
+        - dh2.access.npf
+        - dj1.access.npf
+        - dj2.access.npf
+        - dk1.access.npf
+        - dk2.access.npf
+        - dm1.access.npf
+        - dm2.access.npf
+        - dn1.access.npf
+        - dn2.access.npf
+        - dp1.access.npf
+        - dp2.access.npf
+        - dq1.access.npf
+        - dq2.access.npf
+        - dr1.access.npf
+        - dr2.access.npf
+        - ds1.access.npf
+        - ds2.access.npf
+        - dt1.access.npf
+        - dt2.access.npf
+        - du1.access.npf
+        - du2.access.npf
+        - dv1.access.npf
+        - dv2.access.npf
+        - dw1.access.npf
+        - dw2.access.npf
+        - dx1.access.npf
+        - dx2.access.npf
+        - dy1.access.npf
+        - dy2.access.npf
+        - dz1.access.npf
+        - dz2.access.npf
+        - ea1.access.npf
+        - ea2.access.npf
+        - eb1.access.npf
+        - eb2.access.npf
+        - ec1.access.npf
+        - ec2.access.npf
+        - ed1.access.npf
+        - ed2.access.npf
+        - ee1.access.npf
+        - ee2.access.npf
+        - ef1.access.npf
+        - ef2.access.npf
+        - eg1.access.npf
+        - eg2.access.npf
+        - eh1.access.npf
+        - eh2.access.npf
+        - ej1.access.npf
+        - ej2.access.npf
+        - ek1.access.npf
+        - ek2.access.npf
+        - el1.access.npf
+        - el2.access.npf
+        - em1.access.npf
+        - em2.access.npf
+        - expo1.access.npf
+        - expo10.access.npf
+        - expo12.access.npf
+        - expo13.access.npf
+        - expo14.access.npf
+        - expo16.access.npf
+        - expo17.access.npf
+        - expo2.access.npf
+        - expo3.access.npf
+        - expo4.access.npf
+        - expo7.access.npf
+        - expo8.access.npf
+        - expo9.access.npf
+        - fa1.access.npf
+        - fb1.access.npf
+        - fc1.access.npf
+        - fd1.access.npf
+        - fd2.access.npf
+        - fe1.access.npf
+        - fe1.access.npf
+        - ff1.access.npf
+        - fg1.access.npf
+        - fh1.access.npf
+        - fj1.access.npf
+        - fk1.access.npf
+        - fl1.access.npf
+        - fm1.access.npf
+        - fn1.access.npf
+        - fp1.access.npf
+        - fq1.access.npf
+        - fr1.access.npf
+        - fs1.access.npf
+        - ft1.access.npf
+        - fu1.access.npf
+        - fv1.access.npf
+        - fw1.access.npf
+        - ga1.access.npf
+        - gamecrew1.access.npf
+        - gamecrew2.access.npf
+        - gamecrew3.access.npf
+        - gamecrew4.access.npf
+        - gamecrew5.access.npf
+        - gamecrew6.access.npf
+        - gamecrew7.access.npf
+        - gb1.access.npf
+        - gc1.access.npf
+        - ge1.access.npf
+        - gg1.access.npf
+        - gj1.access.npf
+        - gk1.access.npf
+        - gl1.access.npf
+        - helpdesk1.access.npf
+        - helpdesk2.access.npf
+        - helpdesk3.access.npf
+        - medie1.access.npf
+        - medie2.access.npf
+        - scene1.access.npf
+        - shark1.access.npf
+        - shark2.access.npf
+        - shark3.access.npf
+        - web1.access.npf
+        - xa1.access.npf
+        - xa2.access.npf
+        - xb1.access.npf
+        - xb2.access.npf
+        - xc1.access.npf
+        - xc2.access.npf
+        - xd1.access.npf
+        - xd2.access.npf
+        - xe1.access.npf
+        - xe2.access.npf
+        - xf1.access.npf
+        - xf2.access.npf
+        - xg1.access.npf
+        - xg2.access.npf
+        - ya1.access.npf
+        - ya2.access.npf
+        - yb1.access.npf
+        - yb2.access.npf
+        - yc1.access.npf
+        - yc2.access.npf
+        - yd1.access.npf
+        - yd1.access.npf
+        - ye1.access.npf
+        - ye2.access.npf
+        - yf1.access.npf
+        - yf2.access.npf
+        - yg1.access.npf
+        - yg2.access.npf
+        - youtube1.access.npf
+        - youtube2.access.npf
+        - youtube3.access.npf
+        - youtube4.access.npf
+        - youtube5.access.npf
+        - za1.access.npf
+        - za2.access.npf
+        - zb1.access.npf
+        - zb2.access.npf
+        - zc1.access.npf
+        - zc2.access.npf
+        - zd1.access.npf
+        - zd2.access.npf
+        - ze1.access.npf
+        - ze2.access.npf
+        - zf2.access.npf
+        - zg1.access.npf
+        - zg2.access.npf
+        - zf1.access.npf
+        - dl1.access.npf
+        - dl2.access.npf
+        - gh1.access.npf
+
     metrics_path: /snmp
     params:
       module: [access]
