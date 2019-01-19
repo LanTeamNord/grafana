@@ -1,0 +1,29 @@
+ALERT service_down
+  IF (up == 0)
+  ANNOTATIONS {
+      summary = "Can not pull data from job {{ $labels.job }} on instance {{ $labels.instance }}",
+  }
+
+ALERT ping_failed
+  IF (ping == 0)
+  ANNOTATIONS {
+      summary = "Can not ping {{ $labels.hostname }}",
+  }
+
+ALERT both_uplink_active_on_access_switch
+  IF (sum(ifOperStatus{ifDescr=~"GigabitEthernet.*",job="snmp-access", instance!="billet.access.npf"}) BY (instance) == 2)
+  ANNOTATIONS {
+      summary = "Both uplink ports are active on {{ $labels.instance }}",
+  }
+
+ALERT low_uplink_speed
+  IF (ifOperStatus{instance!~"crew(15|12).access.npf",job="snmp-access"} == 1 and ifSpeed{job="snmp-access"} != 1000000000)
+  ANNOTATIONS {
+      summary = "Instance {{ $labels.instance }} uplink speed is low",
+  }
+  
+ALERT high_load
+  IF node_load1 > 18
+  ANNOTATIONS {
+      summary = "Instance {{ $labels.instance }} under high load",
+  }

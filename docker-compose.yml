@@ -1,65 +1,99 @@
-prometheus:
-  image: "vegasbrianc/prom"
-  ports:
-    - "9090:9090"
-  links:
-    - "exporter:export"
-    - "cadvisor:cadvisor"
-  labels: 
-         - "name=prometheus"
-         - "description=Core of Promethues"
-         - "version=0.16.1"
+version: '2'
 
-exporter:
-  image: "prom/container-exporter"
-  volumes:
-    - /sys/fs/cgroup:/cgroup
-    - /var/run/docker.sock:/var/run/docker.sock
-  ports:
-    - "9104:9104"
-  expose:
-    - "9104"
-  labels: 
-    - "name=exporter"
-    - "description=Exports prom data"
-    - "version=latest"
+volumes:
+    prometheus_data: {}
+    grafana_data: {}
 
-sqlite3:
-  image: "prom/promdash"
-  command:
-    - "./bin/rake db:migrate"
-  volumes:
-    - "/tmp/prom:/tmp/prom"
-  environment:
-    - "DATABASE_URL=sqlite3:/tmp/prom/file.sqlite3"
+networks:
+  front-tier:
+    driver: bridge
+  back-tier:
+    driver: bridge
 
-promdash:
-  image: "prom/promdash"
-  ports:
-    - "3000:3000"
-  expose:
-    - "3000"
-  volumes:
-    - /tmp/prom:/tmp/prom
-  environment:
-    - "DATABASE_URL=sqlite3:/tmp/prom/file.sqlite3"
-  labels: 
-    - "name=prom dashboard"
-    - "description=Dashboards for metrics"
-    - "version=latest"
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      #- '-alertmanager.url=http://alertmanager:9093'
+    expose:
+      - 9090
+    ports:
+      - 9090:9090
+    links:
+      - cadvisor:cadvisor
+      - alertmanager:alertmanager
+    depends_on:
+      - cadvisor
+    networks:
+      - back-tier
 
-cadvisor:
-  image: "google/cadvisor"
-  volumes:
-    - "/:/rootfs:ro"
-    - "/var/run:/var/run:rw"
-    - "/sys:/sys:ro"
-    - "/var/lib/docker/:/var/lib/docker:ro"
-  ports:
-    - "8080:8080"
-  expose:
-    - "8080"
-  labels: 
-    - "name=cAdvisor"
-    - "description=Google Container Advisor collects metrics from host and containers"
-    - "version=latest"
+  snmp-exporter:
+    image: prom/snmp-exporter
+    volumes:
+      - ./snmp/:/etc/snmp/
+    expose:
+      - 9116
+    networks:
+      - back-tier
+    command:
+      - '--config.file=/etc/snmp/snmp.yml'
+
+  node-exporter:
+    image: prom/node-exporter
+    expose:
+      - 9100
+    ports:
+      - 9100:9100
+    networks:
+      - back-tier
+
+  alertmanager:
+    image: prom/alertmanager
+    ports:
+      - 9093:9093
+    volumes:
+      - ./alertmanager/:/etc/alertmanager/
+    networks:
+      - back-tier
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      #- '--storage.path=/alertmanager'
+
+  cadvisor:
+    image: google/cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    expose:
+      - 8080
+    networks:
+      - back-tier
+
+  grafana:
+    image: grafana/grafana
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+    env_file:
+      - config.monitoring
+    networks:
+      - back-tier
+      - front-tier
+
+  ping-exporter:
+    image: npflan/ping-exporter
+    expose:
+      - 9120
+    networks:
+      - back-tier

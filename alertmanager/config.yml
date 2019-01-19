@@ -1,0 +1,13 @@
+route:
+    receiver: 'slack'
+    group_by: ['instance', 'hostname']
+
+
+receivers:
+    - name: 'slack'
+      slack_configs:
+          - send_resolved: true
+            text: '{{.CommonAnnotations.summary}}'
+            username: 'Prometheus'
+            channel: '#operations'
+            api_url: 'secret'
