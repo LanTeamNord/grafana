@@ -1,0 +1,7 @@
+####################
+# InfluxDB options
+####################
+
+INFLUX_USER=admin
+INFLUX_PASSWORD=admin
+INFLUX_DB=influx

@@ -3,6 +3,7 @@ version: '2'
 volumes:
     prometheus_data: {}
     grafana_data: {}
+    influxdb-data: {}
 
 networks:
   front-tier:
@@ -96,3 +97,17 @@ services:
       - 9120
     networks:
       - back-tier
+
+
+  influxdb:
+    image: influxdb
+    container_name: influxdb
+    env_file:
+      - config.influxdb
+    ports:
+      - 8086:8086
+    networks:
+      - back-tier
+      - front-tier
+    volumes:
+      - influxdb-data:/var/lib/influxdb
